@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HireTrack — Internship Recruitment Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --card: #16161f;
+    --border: #2a2a38;
+    --cyan: #00e5ff;
+    --cyan-dim: #00b8cc;
+    --yellow: #ffd60a;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --green: #00e676;
+    --red: #ff5252;
+    --orange: #ff9100;
+    --purple: #b388ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 60px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem; font-weight: 500;
+    color: var(--cyan);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--yellow); }
+  nav ul { display: flex; gap: 2rem; list-style: none; }
+  nav ul a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  nav ul a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--cyan); color: var(--bg);
+    padding: 0.45rem 1.1rem; border-radius: 6px;
+    font-size: 0.85rem; font-weight: 600;
+    text-decoration: none; transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 40%, transparent 100%);
+  }
+  .hero-glow {
+    position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,229,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; max-width: 780px; }
+  .hero-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 2px;
+    color: var(--cyan); text-transform: uppercase;
+    border: 1px solid rgba(0,229,255,0.3);
+    padding: 0.35rem 1rem; border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    font-weight: 700; line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 .accent { color: var(--cyan); }
+  .hero h1 .accent2 { color: var(--yellow); }
+  .hero p {
+    font-size: 1.1rem; color: var(--muted); line-height: 1.7;
+    max-width: 580px; margin: 0 auto 2.5rem;
+  }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--cyan); color: var(--bg);
+    padding: 0.8rem 2rem; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 600;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+  .btn-outline {
+    background: transparent; color: var(--text);
+    padding: 0.8rem 2rem; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 500;
+    border: 1px solid var(--border); cursor: pointer;
+    text-decoration: none; transition: border-color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; justify-content: center;
+    margin-top: 4rem; padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--cyan);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+
+  /* ── SECTION ── */
+  section { padding: 5rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 1rem;
+  }
+  .section-title {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700; letter-spacing: -0.8px;
+    margin-bottom: 1rem; line-height: 1.2;
+  }
+  .section-sub { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 560px; }
+
+  /* ── PROBLEM ── */
+  #problem { background: var(--bg2); }
+  .problem-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-top: 3rem;
+  }
+  .problem-cell {
+    background: var(--card); padding: 2rem;
+  }
+  .problem-cell .icon {
+    font-size: 1.5rem; margin-bottom: 0.8rem;
+  }
+  .problem-cell h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .problem-cell p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem; margin-top: 3rem;
+  }
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.8rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card:hover { border-color: var(--cyan); transform: translateY(-3px); }
+  .feature-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 1rem;
+  }
+  .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .feature-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── FLOW ── */
+  #how { background: var(--bg2); }
+  .flow {
+    display: flex; align-items: flex-start; gap: 0;
+    margin-top: 3rem; position: relative;
+  }
+  .flow::before {
+    content: '';
+    position: absolute; top: 28px; left: 28px; right: 28px; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--yellow));
+    z-index: 0;
+  }
+  .flow-step { flex: 1; text-align: center; position: relative; z-index: 1; padding: 0 0.5rem; }
+  .flow-dot {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--cyan);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem; font-size: 1.2rem;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    color: var(--cyan);
+  }
+  .flow-step h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .flow-step p { font-size: 0.78rem; color: var(--muted); }
+
+  /* ── APP SECTION ── */
+  #app { background: var(--bg); }
+  .app-tabs {
+    display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 0.5rem 1.2rem; border-radius: 6px;
+    font-size: 0.85rem; font-weight: 500;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--muted);
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .tab-btn.active { background: var(--cyan); color: var(--bg); border-color: var(--cyan); }
+  .tab-btn:hover:not(.active) { border-color: var(--muted); color: var(--text); }
+
+  /* ── TRACKER APP ── */
+  .tracker-wrap {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+  }
+  .tracker-bar {
+    background: var(--bg3); border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
+  }
+  .tracker-bar-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem; color: var(--cyan);
+  }
+  .add-btn {
+    background: var(--cyan); color: var(--bg);
+    border: none; border-radius: 6px;
+    padding: 0.45rem 1rem; font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+    transition: opacity 0.2s;
+  }
+  .add-btn:hover { opacity: 0.85; }
+
+  /* pipeline kpi strip */
+  .kpi-strip {
+    display: flex; gap: 1px; background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .kpi-cell {
+    flex: 1; background: var(--bg2);
+    padding: 0.9rem 1rem; text-align: center;
+  }
+  .kpi-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem; font-weight: 700; color: var(--cyan);
+    display: block;
+  }
+  .kpi-label { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+
+  /* table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  thead tr { background: var(--bg3); border-bottom: 1px solid var(--border); }
+  thead th {
+    padding: 0.75rem 1rem; text-align: left;
+    font-size: 0.72rem; letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid rgba(42,42,56,0.5); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(0,229,255,0.03); }
+  tbody td { padding: 0.75rem 1rem; color: var(--text); }
+  .td-mono { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); }
+
+  .stage-badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.25rem 0.65rem; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+  }
+  .stage-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  .action-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 0.25rem 0.6rem; border-radius: 5px;
+    font-size: 0.75rem; cursor: pointer; margin-right: 0.3rem;
+    font-family: 'Space Grotesk', sans-serif; transition: all 0.15s;
+  }
+  .action-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .del-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: none; align-items: center; justify-content: center; z-index: 200;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2rem; width: 100%; max-width: 480px;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal h3 { font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--cyan); }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.35rem; }
+  .form-group input, .form-group select {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 7px; padding: 0.6rem 0.85rem;
+    color: var(--text); font-size: 0.88rem;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: border-color 0.2s; outline: none;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--cyan); }
+  .form-group select option { background: var(--bg3); }
+  .modal-btns { display: flex; gap: 0.8rem; margin-top: 1.5rem; justify-content: flex-end; }
+  .modal-cancel {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    padding: 0.55rem 1.2rem; border-radius: 7px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem;
+  }
+  .modal-save {
+    background: var(--cyan); border: none; color: var(--bg);
+    padding: 0.55rem 1.4rem; border-radius: 7px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; font-weight: 600;
+  }
+  .empty-state {
+    text-align: center; padding: 3rem 1rem; color: var(--muted);
+  }
+  .empty-state .e-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+  .empty-state p { font-size: 0.88rem; }
+
+  /* ── WHY ── */
+  #why { background: var(--bg2); }
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem;
+  }
+  .compare-card {
+    border-radius: 12px; padding: 1.8rem;
+    border: 1px solid var(--border);
+  }
+  .compare-card.bad { background: rgba(255,82,82,0.05); border-color: rgba(255,82,82,0.2); }
+  .compare-card.good { background: rgba(0,229,255,0.05); border-color: rgba(0,229,255,0.25); }
+  .compare-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; }
+  .compare-card h3.bad-h { color: var(--red); }
+  .compare-card h3.good-h { color: var(--cyan); }
+  .compare-item {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    font-size: 0.85rem; color: var(--muted); margin-bottom: 0.7rem; line-height: 1.5;
+  }
+  .compare-item .ci { flex-shrink: 0; margin-top: 0.05rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg2); border-top: 1px solid var(--border);
+    padding: 2.5rem 2rem; text-align: center;
+  }
+  .footer-logo { font-family: 'JetBrains Mono', monospace; color: var(--cyan); font-size: 1rem; }
+  .footer-logo span { color: var(--yellow); }
+  footer p { color: var(--muted); font-size: 0.82rem; margin-top: 0.5rem; }
+  .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-top: 1rem; }
+  .footer-links a { color: var(--muted); font-size: 0.82rem; text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--cyan); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    nav ul { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .problem-grid { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; align-items: center; }
+    .flow::before { display: none; }
+    .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+    .kpi-strip { flex-wrap: wrap; }
+    .kpi-cell { min-width: 90px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Hire<span>Track</span></div>
+  <ul>
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#app">Live Demo</a></li>
+    <li><a href="#why">Why Us</a></li>
+  </ul>
+  <a href="#app" class="nav-cta">Try It Free</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Built for Startups · Zero Extra Cost</div>
+    <h1>Stop losing candidates<br>in <span class="accent">spreadsheet chaos</span></h1>
+    <p>HireTrack gives your startup a complete recruitment pipeline — track every candidate from application to joining, with zero software costs and zero learning curve.</p>
+    <div class="hero-btns">
+      <a href="#app" class="btn-primary">Open Live Tracker →</a>
+      <a href="#features" class="btn-outline">See Features</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">93%</div>
+        <div class="stat-label">Indian startups use Excel for ops</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">₹0</div>
+        <div class="stat-label">Software cost to your startup</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">&lt;5 min</div>
+        <div class="stat-label">Setup time, no training needed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-label">// The Problem</div>
+    <div class="section-title">Startups lose great hires<br>to broken processes</div>
+    <p class="section-sub">When you're growing fast, recruitment gets messy. Candidates fall through cracks. Recruiters duplicate effort. No one has a clear picture.</p>
+    <div class="problem-grid">
+      <div class="problem-cell">
+        <div class="icon">📂</div>
+        <h3>Scattered Spreadsheets</h3>
+        <p>Every recruiter keeps their own sheet. No one knows who reached out to which candidate, or when.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="icon">🔔</div>
+        <h3>Missed Follow-Ups</h3>
+        <p>No reminders, no alerts. Candidates wait for days without a response and accept competing offers.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="icon">🔁</div>
+        <h3>Duplicate Outreach</h3>
+        <p>Two recruiters contact the same person. It looks unprofessional and wastes time for both sides.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="icon">📉</div>
+        <h3>Zero Pipeline Visibility</h3>
+        <p>Management can't see how many candidates are at each stage, or where the funnel is leaking.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-label">// Features</div>
+    <div class="section-title">Everything in one place</div>
+    <p class="section-sub">No expensive ATS. No subscriptions. Just a clean system your team will actually use.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,229,255,0.1)">🗂️</div>
+        <h3>Candidate Database</h3>
+        <p>Centralised profiles with source, skills, contact, and expected CTC. Never search your inbox again.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,214,10,0.1)">📊</div>
+        <h3>Pipeline Tracker</h3>
+        <p>Visual stage-by-stage view: Applied → Screened → Interview → Offer → Joined. Always know where everyone is.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,230,118,0.1)">📅</div>
+        <h3>Interview Scheduler</h3>
+        <p>Log interview dates, interviewers, modes, and feedback ratings in one table.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(179,136,255,0.1)">📈</div>
+        <h3>Funnel Analytics</h3>
+        <p>See drop-off rates at each stage. Identify exactly where you're losing candidates.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,145,0,0.1)">👤</div>
+        <h3>Recruiter Metrics</h3>
+        <p>Per-recruiter stats: calls, interviews scheduled, offers made, and average days to hire.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,229,255,0.08)">⬇️</div>
+        <h3>Excel Export</h3>
+        <p>Download your full ATS as a formatted Excel file any time. Your data, yours to keep.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-label">// How It Works</div>
+    <div class="section-title">Up and running in minutes</div>
+    <p class="section-sub">No setup. No onboarding calls. No IT team required.</p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-dot">01</div>
+        <h4>Add Candidates</h4>
+        <p>Enter applicant details from any source</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">02</div>
+        <h4>Assign Stages</h4>
+        <p>Move candidates through your pipeline</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">03</div>
+        <h4>Log Interviews</h4>
+        <p>Record feedback and outcomes in real time</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">04</div>
+        <h4>Track Progress</h4>
+        <p>See your full funnel on the dashboard</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">05</div>
+        <h4>Export & Share</h4>
+        <p>Download the Excel ATS for offline use</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE TRACKER APP -->
+<section id="app">
+  <div class="section-inner">
+    <div class="section-label">// Live Demo</div>
+    <div class="section-title">Try the tracker right here</div>
+    <p class="section-sub" style="margin-bottom:1.8rem">Add real candidates and track them live. Data stays in your browser — nothing is sent anywhere.</p>
+
+    <div class="tracker-wrap">
+      <div class="tracker-bar">
+        <div class="tracker-bar-title">HireTrack / Candidate Pipeline</div>
+        <div style="display:flex;gap:0.6rem;align-items:center">
+          <input id="searchBox" placeholder="Search candidates…" style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.8rem;color:var(--text);font-size:0.82rem;font-family:'Space Grotesk',sans-serif;outline:none;width:180px" oninput="renderTable()"/>
+          <button class="add-btn" onclick="openModal()">+ Add Candidate</button>
+        </div>
+      </div>
+
+      <div class="kpi-strip" id="kpiStrip"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Position</th><th>Source</th>
+              <th>Stage</th><th>Recruiter</th><th>Date Applied</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="candidateTable"></tbody>
+        </table>
+        <div id="emptyState" class="empty-state" style="display:none">
+          <div class="e-icon">🔍</div>
+          <p>No candidates yet. Click <strong>+ Add Candidate</strong> to get started.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="section-inner">
+    <div class="section-label">// Why HireTrack</div>
+    <div class="section-title">The gap between chaos<br>and enterprise software</div>
+    <p class="section-sub">Most ATS tools are built for companies with 200+ employees. We built for the ones with 5.</p>
+    <div class="compare-grid">
+      <div class="compare-card bad">
+        <h3 class="bad-h">❌ Without HireTrack</h3>
+        <div class="compare-item"><span class="ci">🔴</span> 3 different spreadsheets per recruiter</div>
+        <div class="compare-item"><span class="ci">🔴</span> Candidates ghosted due to missed follow-ups</div>
+        <div class="compare-item"><span class="ci">🔴</span> No idea how many offers were sent this month</div>
+        <div class="compare-item"><span class="ci">🔴</span> 2+ hours/week just reconciling data</div>
+        <div class="compare-item"><span class="ci">🔴</span> No visibility for founders or team leads</div>
+      </div>
+      <div class="compare-card good">
+        <h3 class="good-h">✅ With HireTrack</h3>
+        <div class="compare-item"><span class="ci">🟢</span> One source of truth for the whole team</div>
+        <div class="compare-item"><span class="ci">🟢</span> Pipeline status visible at a glance</div>
+        <div class="compare-item"><span class="ci">🟢</span> Funnel metrics updated in real time</div>
+        <div class="compare-item"><span class="ci">🟢</span> Zero software cost — runs on Excel/browser</div>
+        <div class="compare-item"><span class="ci">🟢</span> Any team member can view and update</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Hire<span>Track</span></div>
+  <p>Internship Recruitment Tracking System for Startups · Shreya Chopra · 25BBA149</p>
+  <div class="footer-links">
+    <a href="#app">Live Tracker</a>
+    <a href="#features">Features</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Add Candidate</h3>
+    <div class="form-group"><label>Full Name *</label><input id="f-name" placeholder="Aarav Mehta"/></div>
+    <div class="form-group"><label>Email</label><input id="f-email" type="email" placeholder="aarav@email.com"/></div>
+    <div class="form-group"><label>Position Applied *</label><input id="f-pos" placeholder="Marketing Intern"/></div>
+    <div class="form-group"><label>Source</label>
+      <select id="f-src">
+        <option>LinkedIn</option><option>Internshala</option><option>Referral</option>
+        <option>Company Website</option><option>Email</option><option>Naukri</option>
+        <option>Campus Drive</option><option>Walk-In</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Current Stage</label>
+      <select id="f-stage">
+        <option>Applied</option><option>Phone Screened</option><option>Assignment Sent</option>
+        <option>Interview Scheduled</option><option>HR Round</option><option>Final Round</option>
+        <option>Offer Extended</option><option>Joined</option><option>Rejected</option><option>On Hold</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Recruiter Assigned</label><input id="f-rec" placeholder="Priya Sharma"/></div>
+    <div class="form-group"><label>Date Applied</label><input id="f-date" type="date"/></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" onclick="saveCandidate()">Save Candidate</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let candidates = JSON.parse(localStorage.getItem('ht_candidates') || '[]');
+let editingId = null;
+let counter = parseInt(localStorage.getItem('ht_counter') || '1000');
+
+function save() {
+  localStorage.setItem('ht_candidates', JSON.stringify(candidates));
+  localStorage.setItem('ht_counter', String(counter));
+}
+
+// ── STAGE CONFIG ──
+const STAGES = {
+  'Applied':             { color: '#7a7a9a', bg: 'rgba(122,122,154,0.15)' },
+  'Phone Screened':      { color: '#ff9100', bg: 'rgba(255,145,0,0.15)' },
+  'Assignment Sent':     { color: '#ffcc02', bg: 'rgba(255,204,2,0.12)' },
+  'Interview Scheduled': { color: '#b388ff', bg: 'rgba(179,136,255,0.15)' },
+  'HR Round':            { color: '#00b0ff', bg: 'rgba(0,176,255,0.15)' },
+  'Final Round':         { color: '#00e5ff', bg: 'rgba(0,229,255,0.15)' },
+  'Offer Extended':      { color: '#69f0ae', bg: 'rgba(105,240,174,0.12)' },
+  'Joined':              { color: '#00e676', bg: 'rgba(0,230,118,0.15)' },
+  'Rejected':            { color: '#ff5252', bg: 'rgba(255,82,82,0.15)' },
+  'On Hold':             { color: '#ffd60a', bg: 'rgba(255,214,10,0.12)' },
+};
+
+function stageBadge(stage) {
+  const s = STAGES[stage] || STAGES['Applied'];
+  return `<span class="stage-badge" style="color:${s.color};background:${s.bg}"><span class="stage-dot" style="background:${s.color}"></span>${stage}</span>`;
+}
+
+// ── KPI STRIP ──
+function renderKPIs() {
+  const total = candidates.length;
+  const active = candidates.filter(c => !['Rejected','On Hold'].includes(c.stage)).length;
+  const offers = candidates.filter(c => ['Offer Extended','Joined'].includes(c.stage)).length;
+  const joined = candidates.filter(c => c.stage === 'Joined').length;
+  const conv = total ? Math.round((joined/total)*100) : 0;
+  document.getElementById('kpiStrip').innerHTML = [
+    ['Total',total,'var(--cyan)'],
+    ['Active',active,'var(--purple)'],
+    ['Offers',offers,'var(--green)'],
+    ['Joined',joined,'#00e676'],
+    ['Conversion',conv+'%','var(--yellow)'],
+  ].map(([l,v,c]) => `
+    <div class="kpi-cell">
+      <span class="kpi-num" style="color:${c}">${v}</span>
+      <div class="kpi-label">${l}</div>
+    </div>`).join('');
+}
+
+// ── TABLE ──
+function renderTable() {
+  const q = (document.getElementById('searchBox').value || '').toLowerCase();
+  const filtered = candidates.filter(c =>
+    !q || c.name.toLowerCase().includes(q) ||
+    c.position.toLowerCase().includes(q) ||
+    c.stage.toLowerCase().includes(q) ||
+    (c.recruiter||'').toLowerCase().includes(q)
+  );
+  const tbody = document.getElementById('candidateTable');
+  const empty = document.getElementById('emptyState');
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map(c => `
+      <tr>
+        <td class="td-mono">${c.id}</td>
+        <td><strong>${c.name}</strong><br><span style="color:var(--muted);font-size:0.75rem">${c.email||''}</span></td>
+        <td>${c.position}</td>
+        <td><span style="color:var(--muted)">${c.source}</span></td>
+        <td>${stageBadge(c.stage)}</td>
+        <td>${c.recruiter||'—'}</td>
+        <td class="td-mono">${c.date||'—'}</td>
+        <td>
+          <button class="action-btn" onclick="editCandidate('${c.id}')">Edit</button>
+          <button class="action-btn del-btn" onclick="deleteCandidate('${c.id}')">Delete</button>
+        </td>
+      </tr>`).join('');
+  }
+  renderKPIs();
+}
+
+// ── MODAL ──
+function openModal(id) {
+  editingId = id || null;
+  const m = document.getElementById('modalTitle');
+  if (id) {
+    m.textContent = 'Edit Candidate';
+    const c = candidates.find(x => x.id === id);
+    document.getElementById('f-name').value = c.name;
+    document.getElementById('f-email').value = c.email||'';
+    document.getElementById('f-pos').value = c.position;
+    document.getElementById('f-src').value = c.source;
+    document.getElementById('f-stage').value = c.stage;
+    document.getElementById('f-rec').value = c.recruiter||'';
+    document.getElementById('f-date').value = c.date||'';
+  } else {
+    m.textContent = 'Add Candidate';
+    ['f-name','f-email','f-pos','f-rec','f-date'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f-src').value = 'LinkedIn';
+    document.getElementById('f-stage').value = 'Applied';
+    document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  }
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function saveCandidate() {
+  const name = document.getElementById('f-name').value.trim();
+  const pos  = document.getElementById('f-pos').value.trim();
+  if (!name || !pos) { alert('Name and Position are required.'); return; }
+  const data = {
+    name, position: pos,
+    email: document.getElementById('f-email').value.trim(),
+    source: document.getElementById('f-src').value,
+    stage: document.getElementById('f-stage').value,
+    recruiter: document.getElementById('f-rec').value.trim(),
+    date: document.getElementById('f-date').value,
+  };
+  if (editingId) {
+    const idx = candidates.findIndex(c => c.id === editingId);
+    candidates[idx] = { ...candidates[idx], ...data };
+  } else {
+    counter++;
+    candidates.unshift({ id: `CAN-${counter}`, ...data });
+  }
+  save(); closeModal(); renderTable();
+}
+
+function editCandidate(id) { openModal(id); }
+
+function deleteCandidate(id) {
+  if (!confirm('Remove this candidate?')) return;
+  candidates = candidates.filter(c => c.id !== id);
+  save(); renderTable();
+}
+
+// Close on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ── SEED DEMO DATA (only if empty) ──
+if (!candidates.length) {
+  const seed = [
+    { name:'Aarav Mehta',    email:'aarav@email.com',  position:'Marketing Intern',     source:'LinkedIn',   stage:'Joined',               recruiter:'Priya Sharma', date:'2025-01-05' },
+    { name:'Sneha Rao',      email:'sneha@email.com',  position:'Data Analyst Intern',  source:'Internshala',stage:'HR Round',             recruiter:'Rahul Gupta',  date:'2025-01-08' },
+    { name:'Karan Singh',    email:'karan@email.com',  position:'UI/UX Intern',         source:'Referral',   stage:'Offer Extended',       recruiter:'Priya Sharma', date:'2025-01-10' },
+    { name:'Riya Patel',     email:'riya@email.com',   position:'Content Writer',       source:'LinkedIn',   stage:'Rejected',             recruiter:'Anjali Verma', date:'2025-01-12' },
+    { name:'Arjun Nair',     email:'arjun@email.com',  position:'Software Dev Intern',  source:'Campus Drive',stage:'Final Round',         recruiter:'Rahul Gupta',  date:'2025-01-15' },
+    { name:'Meera Joshi',    email:'meera@email.com',  position:'HR Intern',            source:'Naukri',     stage:'Interview Scheduled',  recruiter:'Anjali Verma', date:'2025-01-18' },
+    { name:'Pooja Sharma',   email:'pooja@email.com',  position:'UI/UX Intern',         source:'Referral',   stage:'Joined',               recruiter:'Priya Sharma', date:'2025-02-01' },
+    { name:'Vikram Das',     email:'vikram@email.com', position:'Software Dev Intern',  source:'LinkedIn',   stage:'Phone Screened',       recruiter:'Rahul Gupta',  date:'2025-02-03' },
+    { name:'Divya Reddy',    email:'divya@email.com',  position:'HR Intern',            source:'LinkedIn',   stage:'Applied',              recruiter:'Anjali Verma', date:'2025-02-10' },
+    { name:'Harsh Mishra',   email:'harsh@email.com',  position:'Finance Intern',       source:'Campus Drive',stage:'On Hold',             recruiter:'Priya Sharma', date:'2025-02-22' },
+  ];
+  seed.forEach((s,i) => { counter++; candidates.push({ id:`CAN-${counter}`, ...s }); });
+  save();
+}
+
+renderTable();
+</script>
+</body>
+</html>
