@@ -51,5 +51,4 @@ Built with 38 operational formulas and data validation rules distributed across 
 ## Academic Profile
 
 *   **Author:** Shreya Chopra
-*   **Program:** Bachelor of Business Administration (BBA) in AI & Data Science
-*   **Institution:** Kristu Jayanti (Deemed to be University), Bengaluru
+
