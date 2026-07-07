@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HireTrack — Hiring Pipeline for High-Volume Teams</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --card: #16161f;
+    --border: #2a2a38;
+    --cyan: #00e5ff;
+    --cyan-dim: #00b8cc;
+    --yellow: #ffd60a;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --green: #00e676;
+    --red: #ff5252;
+    --orange: #ff9100;
+    --purple: #b388ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 60px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem; font-weight: 500;
+    color: var(--cyan);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--yellow); }
+  nav ul { display: flex; gap: 1.6rem; list-style: none; }
+  nav ul a { color: var(--muted); text-decoration: none; font-size: 0.86rem; transition: color 0.2s; }
+  nav ul a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--cyan); color: var(--bg);
+    padding: 0.45rem 1.1rem; border-radius: 6px;
+    font-size: 0.85rem; font-weight: 600;
+    text-decoration: none; transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 40%, transparent 100%);
+  }
+  .hero-glow {
+    position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,229,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; max-width: 800px; }
+  .hero-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 2px;
+    color: var(--cyan); text-transform: uppercase;
+    border: 1px solid rgba(0,229,255,0.3);
+    padding: 0.35rem 1rem; border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.6rem, 5.6vw, 4.2rem);
+    font-weight: 700; line-height: 1.12;
+    letter-spacing: -1.5px;
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 .accent { color: var(--cyan); }
+  .hero h1 .accent2 { color: var(--yellow); }
+  .hero p {
+    font-size: 1.08rem; color: var(--muted); line-height: 1.7;
+    max-width: 620px; margin: 0 auto 2.5rem;
+  }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--cyan); color: var(--bg);
+    padding: 0.8rem 2rem; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 600;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+  .btn-outline {
+    background: transparent; color: var(--text);
+    padding: 0.8rem 2rem; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 500;
+    border: 1px solid var(--border); cursor: pointer;
+    text-decoration: none; transition: border-color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; justify-content: center;
+    margin-top: 4rem; padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--cyan);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; max-width: 160px; }
+
+  /* ── SECTION ── */
+  section { padding: 5rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 1rem;
+  }
+  .section-title {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700; letter-spacing: -0.8px;
+    margin-bottom: 1rem; line-height: 1.2;
+  }
+  .section-sub { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 620px; }
+
+  /* ── PROBLEM ── */
+  #problem { background: var(--bg2); }
+  .problem-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-top: 3rem;
+  }
+  .problem-cell {
+    background: var(--card); padding: 2rem;
+  }
+  .problem-cell .icon {
+    font-size: 1.5rem; margin-bottom: 0.8rem;
+  }
+  .problem-cell h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .problem-cell p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem; margin-top: 3rem;
+  }
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.8rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card:hover { border-color: var(--cyan); transform: translateY(-3px); }
+  .feature-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 1rem;
+  }
+  .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .feature-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── SCALE ── */
+  #scale { background: var(--bg2); }
+  .scale-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem; margin-top: 3rem;
+  }
+  .scale-card {
+    display: flex; gap: 1rem;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+  }
+  .scale-card .num {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    color: var(--cyan); font-size: 1.1rem; flex-shrink: 0;
+  }
+  .scale-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .scale-card p { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── FLOW ── */
+  #how { background: var(--bg); }
+  .flow {
+    display: flex; align-items: flex-start; gap: 0;
+    margin-top: 3rem; position: relative;
+  }
+  .flow::before {
+    content: '';
+    position: absolute; top: 28px; left: 28px; right: 28px; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--yellow));
+    z-index: 0;
+  }
+  .flow-step { flex: 1; text-align: center; position: relative; z-index: 1; padding: 0 0.5rem; }
+  .flow-dot {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--cyan);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem; font-size: 1.2rem;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    color: var(--cyan);
+  }
+  .flow-step h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .flow-step p { font-size: 0.78rem; color: var(--muted); }
+
+  /* ── APP SECTION ── */
+  #app { background: var(--bg2); }
+  .app-tabs {
+    display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 0.5rem 1.2rem; border-radius: 6px;
+    font-size: 0.85rem; font-weight: 500;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--muted);
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .tab-btn.active { background: var(--cyan); color: var(--bg); border-color: var(--cyan); }
+  .tab-btn:hover:not(.active) { border-color: var(--muted); color: var(--text); }
+
+  /* ── TRACKER APP ── */
+  .tracker-wrap {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+  }
+  .tracker-bar {
+    background: var(--bg3); border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
+  }
+  .tracker-bar-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem; color: var(--cyan);
+  }
+  .add-btn {
+    background: var(--cyan); color: var(--bg);
+    border: none; border-radius: 6px;
+    padding: 0.45rem 1rem; font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+    transition: opacity 0.2s;
+  }
+  .add-btn:hover { opacity: 0.85; }
+
+  /* filter bar */
+  .filter-bar {
+    display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center;
+    padding: 0.9rem 1.5rem; background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-bar input, .filter-bar select {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.42rem 0.7rem;
+    color: var(--text); font-size: 0.8rem;
+    font-family: 'Space Grotesk', sans-serif; outline: none;
+  }
+  .filter-bar input:focus, .filter-bar select:focus { border-color: var(--cyan); }
+  #searchBox { min-width: 200px; flex: 1; }
+  .filter-bar .fb-label { font-size: 0.72rem; color: var(--muted); }
+
+  /* bulk bar */
+  .bulk-bar {
+    display: none; align-items: center; gap: 0.8rem;
+    padding: 0.7rem 1.5rem; background: rgba(0,229,255,0.06);
+    border-bottom: 1px solid var(--border); font-size: 0.82rem; flex-wrap: wrap;
+  }
+  .bulk-bar select {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.35rem 0.6rem; color: var(--text); font-size: 0.8rem;
+  }
+  #bulkCount { font-weight: 600; color: var(--cyan); }
+
+  /* pipeline kpi strip */
+  .kpi-strip {
+    display: flex; gap: 1px; background: var(--border);
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .kpi-cell {
+    flex: 1; min-width: 90px; background: var(--bg2);
+    padding: 0.9rem 1rem; text-align: center;
+  }
+  .kpi-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem; font-weight: 700; color: var(--cyan);
+    display: block;
+  }
+  .kpi-label { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+
+  /* table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  thead tr { background: var(--bg3); border-bottom: 1px solid var(--border); }
+  thead th {
+    padding: 0.75rem 1rem; text-align: left;
+    font-size: 0.72rem; letter-spacing: 0.8px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; white-space: nowrap;
+  }
+  thead th.sortable { cursor: pointer; user-select: none; }
+  thead th.sortable:hover { color: var(--text); }
+  .sort-ind { font-size: 0.65rem; margin-left: 0.2rem; color: var(--cyan); }
+  tbody tr { border-bottom: 1px solid rgba(42,42,56,0.5); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(0,229,255,0.03); }
+  tbody td { padding: 0.75rem 1rem; color: var(--text); }
+  .td-mono { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); }
+
+  .stage-badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.25rem 0.65rem; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+  }
+  .stage-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  .action-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 0.25rem 0.6rem; border-radius: 5px;
+    font-size: 0.75rem; cursor: pointer; margin-right: 0.3rem;
+    font-family: 'Space Grotesk', sans-serif; transition: all 0.15s;
+  }
+  .action-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .del-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .pagination {
+    display: flex; align-items: center; justify-content: center; gap: 1rem;
+    padding: 1rem; border-top: 1px solid var(--border);
+    font-size: 0.82rem; color: var(--muted);
+  }
+
+  /* Modal (shared) */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: none; align-items: center; justify-content: center; z-index: 200;
+    backdrop-filter: blur(4px); padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2rem; width: 100%; max-width: 480px;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal.wide { max-width: 560px; }
+  .modal h3 { font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--cyan); }
+  .form-group { margin-bottom: 1rem; }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.35rem; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 7px; padding: 0.6rem 0.85rem;
+    color: var(--text); font-size: 0.88rem;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: border-color 0.2s; outline: none;
+  }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--cyan); }
+  .form-group select option { background: var(--bg3); }
+  .form-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
+  .modal-btns { display: flex; gap: 0.8rem; margin-top: 1.5rem; justify-content: flex-end; }
+  .modal-cancel {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    padding: 0.55rem 1.2rem; border-radius: 7px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem;
+  }
+  .modal-save {
+    background: var(--cyan); border: none; color: var(--bg);
+    padding: 0.55rem 1.4rem; border-radius: 7px; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; font-weight: 600;
+  }
+  .modal-save.danger { background: var(--red); }
+  .empty-state {
+    text-align: center; padding: 3rem 1rem; color: var(--muted);
+  }
+  .empty-state .e-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+  .empty-state p { font-size: 0.88rem; }
+
+  /* Detail modal */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-bottom: 1.2rem; }
+  .detail-field label { display: block; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.2rem; }
+  .detail-field div { font-size: 0.9rem; }
+  .notes-list { max-height: 190px; overflow-y: auto; border-top: 1px solid var(--border); padding-top: 0.9rem; margin-top: 0.5rem; }
+  .note-item { background: var(--bg3); border-radius: 8px; padding: 0.6rem 0.8rem; margin-bottom: 0.5rem; font-size: 0.82rem; line-height: 1.5; }
+  .note-item .note-date { color: var(--muted); font-size: 0.68rem; margin-top: 0.3rem; }
+  .note-input-row { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+  .note-input-row textarea { flex: 1; min-height: 44px; }
+  .no-notes { font-size: 0.82rem; color: var(--muted); padding: 0.6rem 0; }
+
+  /* Confirm modal */
+  .confirm-modal .modal { max-width: 400px; }
+  .confirm-modal p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 0.5rem; }
+
+  /* Toasts */
+  .toast-container {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    display: flex; flex-direction: column; gap: 0.6rem; z-index: 400;
+    max-width: 320px;
+  }
+  .toast {
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 4px solid var(--cyan); border-radius: 8px;
+    padding: 0.8rem 1.1rem; font-size: 0.85rem; color: var(--text);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    animation: toastIn 0.25s ease;
+  }
+  .toast.success { border-left-color: var(--green); }
+  .toast.error { border-left-color: var(--red); }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* ── ANALYTICS ── */
+  #analytics { background: var(--bg); }
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 3rem; }
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; }
+  .chart-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; }
+  .chart-card .chart-wrap { position: relative; height: 240px; }
+
+  /* ── WHY ── */
+  #why { background: var(--bg2); }
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem;
+  }
+  .compare-card {
+    border-radius: 12px; padding: 1.8rem;
+    border: 1px solid var(--border);
+  }
+  .compare-card.bad { background: rgba(255,82,82,0.05); border-color: rgba(255,82,82,0.2); }
+  .compare-card.good { background: rgba(0,229,255,0.05); border-color: rgba(0,229,255,0.25); }
+  .compare-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; }
+  .compare-card h3.bad-h { color: var(--red); }
+  .compare-card h3.good-h { color: var(--cyan); }
+  .compare-item {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    font-size: 0.85rem; color: var(--muted); margin-bottom: 0.7rem; line-height: 1.5;
+  }
+  .compare-item .ci { flex-shrink: 0; margin-top: 0.05rem; }
+
+  /* ── PRICING ── */
+  #pricing { background: var(--bg); }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 3rem; }
+  .price-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2rem; display: flex; flex-direction: column;
+    position: relative;
+  }
+  .price-card.featured { border-color: var(--cyan); }
+  .price-card .badge {
+    position: absolute; top: -12px; right: 1.5rem;
+    background: var(--cyan); color: var(--bg);
+    font-size: 0.66rem; font-weight: 700; padding: 0.25rem 0.7rem;
+    border-radius: 999px; letter-spacing: 0.5px;
+  }
+  .price-card h3 { font-size: 1.05rem; margin-bottom: 0.4rem; }
+  .price-card .tagline { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; }
+  .price-card .price { font-family: 'JetBrains Mono', monospace; font-size: 1.7rem; font-weight: 700; color: var(--cyan); margin-bottom: 1.2rem; }
+  .price-card .price span { font-size: 0.82rem; color: var(--muted); font-weight: 400; }
+  .price-card ul { list-style: none; margin-bottom: 1.5rem; flex: 1; }
+  .price-card li { font-size: 0.84rem; color: var(--muted); margin-bottom: 0.65rem; padding-left: 1.2rem; position: relative; line-height: 1.4; }
+  .price-card li::before { content: '✓'; position: absolute; left: 0; color: var(--cyan); }
+  .pricing-note { text-align: center; color: var(--muted); font-size: 0.76rem; margin-top: 1.8rem; }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--bg2); }
+  .contact-form { max-width: 620px; margin-top: 2.5rem; display: grid; gap: 1rem; }
+  .contact-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .contact-form input, .contact-form select, .contact-form textarea {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 7px;
+    padding: 0.75rem 0.9rem; color: var(--text);
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; outline: none;
+  }
+  .contact-form textarea { min-height: 100px; resize: vertical; }
+  .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus { border-color: var(--cyan); }
+  .contact-form .form-note { font-size: 0.76rem; color: var(--muted); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg); border-top: 1px solid var(--border);
+    padding: 2.5rem 2rem; text-align: center;
+  }
+  .footer-logo { font-family: 'JetBrains Mono', monospace; color: var(--cyan); font-size: 1rem; }
+  .footer-logo span { color: var(--yellow); }
+  footer p { color: var(--muted); font-size: 0.82rem; margin-top: 0.5rem; }
+  .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+  .footer-links a { color: var(--muted); font-size: 0.82rem; text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--cyan); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .problem-grid { grid-template-columns: 1fr 1fr; }
+    .chart-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .scale-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    nav ul { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .problem-grid { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .form-row-2 { grid-template-columns: 1fr; }
+    .contact-form .form-row { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; align-items: center; }
+    .flow::before { display: none; }
+    .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+    .kpi-strip { flex-wrap: wrap; }
+    .kpi-cell { min-width: 90px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Hire<span>Track</span></div>
+  <ul>
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#app">Live Demo</a></li>
+    <li><a href="#analytics">Analytics</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Request a Demo</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Built for High-Volume Hiring Teams</div>
+    <h1>Hire hundreds a month<br>without <span class="accent">losing a single candidate</span></h1>
+    <p>HireTrack is a lightweight applicant pipeline built for teams that hire at volume — BPOs, data-annotation and labeling workforces, and gig-staffing operations. Bulk-import candidates from sourcing drives, screen with skill scores, and track every stage from application to onboarding, all in one shared workspace.</p>
+    <div class="hero-btns">
+      <a href="#app" class="btn-primary">Open Live Tracker →</a>
+      <a href="#contact" class="btn-outline">Request a Demo</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">10K+</div>
+        <div class="stat-label">Candidates per workspace, no slowdown</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Integrations required to get started</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">&lt;5 min</div>
+        <div class="stat-label">Setup time, no IT ticket needed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-label">// The Problem</div>
+    <div class="section-title">High-volume hiring breaks<br>spreadsheet-based ops fast</div>
+    <p class="section-sub">When you're screening hundreds of applicants a week — for annotation, moderation, or support roles — candidates fall through cracks, recruiters duplicate effort, and no one has a clean view of the funnel.</p>
+    <div class="problem-grid">
+      <div class="problem-cell">
+        <div class="icon">📂</div>
+        <h3>Scattered Spreadsheets</h3>
+        <p>Every recruiter keeps their own sheet. No one knows who reached out to which candidate, or when.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="icon">🔔</div>
+        <h3>Missed Follow-Ups</h3>
+        <p>No reminders, no alerts. Candidates wait for days without a response and drop out of the funnel.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="icon">🔁</div>
+        <h3>Duplicate Outreach</h3>
+        <p>Two recruiters contact the same person from different sourcing drives — it wastes time on both sides.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="icon">📉</div>
+        <h3>Zero Pipeline Visibility</h3>
+        <p>Ops leads can't see how many candidates are at each stage, or where the funnel is leaking.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="icon">📥</div>
+        <h3>No Bulk Tools</h3>
+        <p>Candidates from mass sourcing drives, vendor lists, or walk-ins get entered one row at a time.</p>
+      </div>
+      <div class="problem-cell">
+        <div class="icon">🧪</div>
+        <h3>No Skill Screening Record</h3>
+        <p>Assessment or language-test scores live in someone's inbox instead of the candidate record.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-label">// Features</div>
+    <div class="section-title">Everything in one place</div>
+    <p class="section-sub">No expensive enterprise ATS. No per-seat license tax. Just a clean system your recruiting team will actually use.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,229,255,0.1)">🗂️</div>
+        <h3>Candidate Database</h3>
+        <p>Centralised profiles with source, languages, contact, and skill score. Never search your inbox again.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,214,10,0.1)">📊</div>
+        <h3>Pipeline Tracker</h3>
+        <p>Visual stage-by-stage view: Applied → Screened → Assessment → Interview → Offer → Joined.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,230,118,0.1)">📥</div>
+        <h3>Bulk CSV Import</h3>
+        <p>Upload hundreds of candidates at once from a sourcing drive, vendor list, or campus database.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(179,136,255,0.1)">📈</div>
+        <h3>Funnel Analytics</h3>
+        <p>Live charts on stage drop-off, sourcing mix, recruiter performance, and monthly hiring trend.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,145,0,0.1)">👤</div>
+        <h3>Recruiter Metrics</h3>
+        <p>Per-recruiter stats: candidates handled, offers made, and conversion to joined.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,229,255,0.08)">⬇️</div>
+        <h3>CSV Export</h3>
+        <p>Download your full pipeline — filtered or complete — any time. Your data, yours to keep.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,82,82,0.1)">🧬</div>
+        <h3>Duplicate Detection</h3>
+        <p>Flags repeat email addresses at entry time, so the same person isn't contacted by two recruiters.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,230,118,0.08)">🌐</div>
+        <h3>Language &amp; Skill Fields</h3>
+        <p>Track spoken languages and assessment scores directly on the candidate record — built for annotation and support hiring.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(179,136,255,0.08)">✅</div>
+        <h3>Batch Stage Actions</h3>
+        <p>Select any number of candidates and move them to a new stage, or remove them, in one click.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCALE -->
+<section id="scale">
+  <div class="section-inner">
+    <div class="section-label">// Built For Scale</div>
+    <div class="section-title">Made for teams hiring<br>hundreds of people a month</div>
+    <p class="section-sub">Most ATS tools are designed around a handful of hires a quarter. HireTrack is built around the workflow of BPOs, data-annotation vendors, and gig-workforce operations that onboard in batches.</p>
+    <div class="scale-grid">
+      <div class="scale-card">
+        <div class="num">01</div>
+        <div>
+          <h3>Bulk sourcing, bulk import</h3>
+          <p>Drop a CSV from a campus drive, job-board export, or vendor list and every candidate lands in the pipeline with the right defaults.</p>
+        </div>
+      </div>
+      <div class="scale-card">
+        <div class="num">02</div>
+        <div>
+          <h3>Multi-language workforce ready</h3>
+          <p>Track which languages each candidate speaks — critical for annotation, moderation, and localization hiring.</p>
+        </div>
+      </div>
+      <div class="scale-card">
+        <div class="num">03</div>
+        <div>
+          <h3>Assessment scores on record</h3>
+          <p>Log a 0–100 skill or test score per candidate so quality screening survives past the interview stage.</p>
+        </div>
+      </div>
+      <div class="scale-card">
+        <div class="num">04</div>
+        <div>
+          <h3>Batch actions across the funnel</h3>
+          <p>Advance, reject, or reassign dozens of candidates at once instead of editing rows one by one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-label">// How It Works</div>
+    <div class="section-title">Up and running in minutes</div>
+    <p class="section-sub">No setup calls. No IT team required. Import your existing pipeline or start fresh.</p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-dot">01</div>
+        <h4>Add or Import</h4>
+        <p>Enter candidates manually or bulk-upload a CSV</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">02</div>
+        <h4>Screen &amp; Score</h4>
+        <p>Log skill scores and languages per candidate</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">03</div>
+        <h4>Move Through Stages</h4>
+        <p>Advance candidates individually or in bulk</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">04</div>
+        <h4>Track the Funnel</h4>
+        <p>See live analytics on drop-off and sourcing mix</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-dot">05</div>
+        <h4>Export &amp; Report</h4>
+        <p>Download the pipeline as CSV for stakeholders</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE TRACKER APP -->
+<section id="app">
+  <div class="section-inner">
+    <div class="section-label">// Live Demo</div>
+    <div class="section-title">Try the tracker right here</div>
+    <p class="section-sub" style="margin-bottom:1.8rem">Add, import, filter, and bulk-manage real candidates. Data stays in your browser's local storage — nothing is sent anywhere.</p>
+
+    <div class="tracker-wrap">
+      <div class="tracker-bar">
+        <div class="tracker-bar-title">HireTrack / Candidate Pipeline</div>
+        <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap">
+          <button class="action-btn" onclick="document.getElementById('csvFile').click()">⬆ Import CSV</button>
+          <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCSVImport(event)"/>
+          <button class="action-btn" onclick="exportCSV()">⬇ Export CSV</button>
+          <button class="add-btn" onclick="openModal()">+ Add Candidate</button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input id="searchBox" placeholder="Search name, email, position…" oninput="onFilterChange()"/>
+        <select id="filterStage" onchange="onFilterChange()"></select>
+        <select id="filterSource" onchange="onFilterChange()"></select>
+        <select id="filterRecruiter" onchange="onFilterChange()"></select>
+        <span class="fb-label">From</span>
+        <input type="date" id="filterFrom" onchange="onFilterChange()"/>
+        <span class="fb-label">To</span>
+        <input type="date" id="filterTo" onchange="onFilterChange()"/>
+        <button class="action-btn" onclick="clearFilters()">Clear Filters</button>
+      </div>
+
+      <div class="kpi-strip" id="kpiStrip"></div>
+
+      <div class="bulk-bar" id="bulkBar">
+        <span id="bulkCount">0 selected</span>
+        <select id="bulkStageSelect"></select>
+        <button class="action-btn" onclick="bulkChangeStage()">Apply Stage</button>
+        <button class="action-btn del-btn" onclick="bulkDelete()">Delete Selected</button>
+        <button class="action-btn" onclick="clearSelection()">Clear Selection</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAllBox" onchange="toggleSelectAllVisible()"/></th>
+              <th>ID</th>
+              <th class="sortable" onclick="setSort('name')">Name <span class="sort-ind" id="sort-name"></span></th>
+              <th class="sortable" onclick="setSort('position')">Position <span class="sort-ind" id="sort-position"></span></th>
+              <th>Source</th>
+              <th class="sortable" onclick="setSort('stage')">Stage <span class="sort-ind" id="sort-stage"></span></th>
+              <th class="sortable" onclick="setSort('recruiter')">Recruiter <span class="sort-ind" id="sort-recruiter"></span></th>
+              <th class="sortable" onclick="setSort('skillScore')">Score <span class="sort-ind" id="sort-skillScore"></span></th>
+              <th>Languages</th>
+              <th class="sortable" onclick="setSort('date')">Date <span class="sort-ind" id="sort-date"></span></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="candidateTable"></tbody>
+        </table>
+        <div id="emptyState" class="empty-state" style="display:none">
+          <div class="e-icon">🔍</div>
+          <p>No candidates match your filters. Try clearing them, or click <strong>+ Add Candidate</strong>.</p>
+        </div>
+      </div>
+
+      <div class="pagination" id="pagination">
+        <button class="action-btn" onclick="prevPage()">← Prev</button>
+        <span id="pageInfo">Page 1 of 1</span>
+        <button class="action-btn" onclick="nextPage()">Next →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYTICS -->
+<section id="analytics">
+  <div class="section-inner">
+    <div class="section-label">// Analytics</div>
+    <div class="section-title">Pipeline analytics, updated live</div>
+    <p class="section-sub">These charts read directly from the candidates in the live demo above — add or import candidates and watch them update.</p>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Pipeline by Stage</h3>
+        <div class="chart-wrap"><canvas id="funnelChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Sourcing Mix</h3>
+        <div class="chart-wrap"><canvas id="sourceChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Recruiter Leaderboard</h3>
+        <div class="chart-wrap"><canvas id="recruiterChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Applications by Month</h3>
+        <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="section-inner">
+    <div class="section-label">// Why HireTrack</div>
+    <div class="section-title">The gap between chaos<br>and enterprise software</div>
+    <p class="section-sub">Most ATS platforms are priced and built for teams making a handful of hires a quarter — not for operations onboarding hundreds of annotators or agents a month.</p>
+    <div class="compare-grid">
+      <div class="compare-card bad">
+        <h3 class="bad-h">❌ Without HireTrack</h3>
+        <div class="compare-item"><span class="ci">🔴</span> A different spreadsheet per recruiter or sourcing vendor</div>
+        <div class="compare-item"><span class="ci">🔴</span> Candidates re-contacted by two recruiters at once</div>
+        <div class="compare-item"><span class="ci">🔴</span> No visibility into where the funnel is leaking</div>
+        <div class="compare-item"><span class="ci">🔴</span> Bulk CSVs re-typed by hand into a sheet</div>
+        <div class="compare-item"><span class="ci">🔴</span> Per-seat licensing that scales against you as headcount grows</div>
+      </div>
+      <div class="compare-card good">
+        <h3 class="good-h">✅ With HireTrack</h3>
+        <div class="compare-item"><span class="ci">🟢</span> One shared pipeline for the whole hiring team</div>
+        <div class="compare-item"><span class="ci">🟢</span> Duplicate emails flagged automatically at entry</div>
+        <div class="compare-item"><span class="ci">🟢</span> Live funnel and sourcing analytics, always current</div>
+        <div class="compare-item"><span class="ci">🟢</span> CSV import handles bulk sourcing drives in seconds</div>
+        <div class="compare-item"><span class="ci">🟢</span> Flat pricing that doesn't punish you for hiring more people</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-label">// Pricing</div>
+    <div class="section-title">Simple plans, no per-seat tax</div>
+    <p class="section-sub">Pricing is indicative for evaluation — final packaging is confirmed with your team based on volume and rollout needs.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Starter</h3>
+        <div class="tagline">For a single hiring pod getting started</div>
+        <div class="price">Free</div>
+        <ul>
+          <li>Up to 100 active candidates</li>
+          <li>1 recruiter workspace</li>
+          <li>Manual candidate entry</li>
+          <li>CSV export</li>
+        </ul>
+        <button class="btn-outline" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'})">Try It Free</button>
+      </div>
+      <div class="price-card featured">
+        <div class="badge">MOST COMMON</div>
+        <h3>Team</h3>
+        <div class="tagline">For hiring teams running ongoing volume drives</div>
+        <div class="price">₹4,999 <span>/ month, indicative</span></div>
+        <ul>
+          <li>Unlimited candidates</li>
+          <li>Unlimited recruiter seats</li>
+          <li>Bulk CSV import &amp; export</li>
+          <li>Duplicate detection</li>
+          <li>Full analytics dashboard</li>
+        </ul>
+        <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Talk to Sales</button>
+      </div>
+      <div class="price-card">
+        <h3>Enterprise</h3>
+        <div class="tagline">For BPOs and data-workforce operations at scale</div>
+        <div class="price">Custom</div>
+        <ul>
+          <li>Everything in Team</li>
+          <li>API access</li>
+          <li>SSO / SAML</li>
+          <li>Dedicated onboarding &amp; support</li>
+          <li>Custom SLA</li>
+        </ul>
+        <button class="btn-outline" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact Sales</button>
+      </div>
+    </div>
+    <p class="pricing-note">Currently shown as a working demo build. Production hosting, data security review, and SLA terms are set up per customer before go-live.</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner">
+    <div class="section-label">// Get In Touch</div>
+    <div class="section-title">Request a demo</div>
+    <p class="section-sub">Tell us a bit about your hiring volume and we'll follow up to walk through HireTrack for your team.</p>
+    <form class="contact-form" id="demoForm" onsubmit="submitDemoRequest(event)">
+      <div class="form-row">
+        <input id="c-name" placeholder="Full name" required/>
+        <input id="c-email" type="email" placeholder="Work email" required/>
+      </div>
+      <div class="form-row">
+        <input id="c-company" placeholder="Company name" required/>
+        <select id="c-volume">
+          <option value="">Monthly hiring volume</option>
+          <option>Under 50</option>
+          <option>50–200</option>
+          <option>200–1,000</option>
+          <option>1,000+</option>
+        </select>
+      </div>
+      <textarea id="c-message" placeholder="What are you hoping to solve with HireTrack?"></textarea>
+      <button type="submit" class="btn-primary" style="justify-self:start">Request Demo</button>
+      <p class="form-note">This opens your email client with the details pre-filled — replace the destination address in the page source with your own contact email before publishing.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Hire<span>Track</span></div>
+  <p>Hiring Pipeline for High-Volume Teams · Built by Shreya Chopra</p>
+  <div class="footer-links">
+    <a href="#app">Live Tracker</a>
+    <a href="#analytics">Analytics</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#contact">Request Demo</a>
+    <a href="https://github.com" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal wide">
+    <h3 id="modalTitle">Add Candidate</h3>
+    <div class="form-group"><label>Full Name *</label><input id="f-name" placeholder="Aarav Mehta"/></div>
+    <div class="form-row-2">
+      <div class="form-group"><label>Email</label><input id="f-email" type="email" placeholder="aarav@email.com"/></div>
+      <div class="form-group"><label>Phone</label><input id="f-phone" placeholder="98765 43210"/></div>
+    </div>
+    <div class="form-group"><label>Position Applied *</label><input id="f-pos" placeholder="Data Annotator"/></div>
+    <div class="form-row-2">
+      <div class="form-group"><label>Source</label>
+        <select id="f-src">
+          <option>LinkedIn</option><option>Internshala</option><option>Referral</option>
+          <option>Company Website</option><option>Email</option><option>Naukri</option>
+          <option>Campus Drive</option><option>Walk-In</option><option>Vendor List</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Current Stage</label>
+        <select id="f-stage"></select>
+      </div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group"><label>Recruiter Assigned</label><input id="f-rec" placeholder="Priya Sharma"/></div>
+      <div class="form-group"><label>Date Applied</label><input id="f-date" type="date"/></div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-group"><label>Languages Spoken</label><input id="f-lang" placeholder="English, Hindi"/></div>
+      <div class="form-group"><label>Skill / Assessment Score (0–100)</label><input id="f-score" type="number" min="0" max="100" placeholder="82"/></div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" onclick="saveCandidate()">Save Candidate</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL / NOTES MODAL -->
+<div class="modal-overlay" id="detailOverlay">
+  <div class="modal wide">
+    <h3>Candidate Detail</h3>
+    <div class="detail-grid">
+      <div class="detail-field"><label>Name</label><div id="d-name"></div></div>
+      <div class="detail-field"><label>ID</label><div id="d-id"></div></div>
+      <div class="detail-field"><label>Email</label><div id="d-email"></div></div>
+      <div class="detail-field"><label>Phone</label><div id="d-phone"></div></div>
+      <div class="detail-field"><label>Position</label><div id="d-pos"></div></div>
+      <div class="detail-field"><label>Source</label><div id="d-src"></div></div>
+      <div class="detail-field"><label>Stage</label><div id="d-stage"></div></div>
+      <div class="detail-field"><label>Recruiter</label><div id="d-rec"></div></div>
+      <div class="detail-field"><label>Languages</label><div id="d-lang"></div></div>
+      <div class="detail-field"><label>Score</label><div id="d-score"></div></div>
+    </div>
+    <div id="notesList" class="notes-list"></div>
+    <div class="note-input-row">
+      <textarea id="noteInput" placeholder="Add a note (call summary, feedback, follow-up)…"></textarea>
+      <button class="modal-save" onclick="addNote()">Add Note</button>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeDetail()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay confirm-modal" id="confirmOverlay">
+  <div class="modal">
+    <h3 id="confirmTitle">Please confirm</h3>
+    <p id="confirmMessage"></p>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="confirmNo()">Cancel</button>
+      <button class="modal-save" id="confirmYesBtn" onclick="confirmYes()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+// ══════════════════════════════════════════
+// STATE & PERSISTENCE
+// ══════════════════════════════════════════
+function normalizeCandidate(c) {
+  return Object.assign({ phone: '', languages: '', skillScore: '', notes: [] }, c);
+}
+
+let candidates = (JSON.parse(localStorage.getItem('ht_candidates') || '[]')).map(normalizeCandidate);
+let editingId = null;
+let counter = parseInt(localStorage.getItem('ht_counter') || '1000');
+
+function save() {
+  localStorage.setItem('ht_candidates', JSON.stringify(candidates));
+  localStorage.setItem('ht_counter', String(counter));
+}
+
+// ══════════════════════════════════════════
+// STAGE CONFIG
+// ══════════════════════════════════════════
+const STAGES = {
+  'Applied':               { color: '#7a7a9a', bg: 'rgba(122,122,154,0.15)' },
+  'Phone Screened':        { color: '#ff9100', bg: 'rgba(255,145,0,0.15)' },
+  'Skill Assessment Sent': { color: '#ffcc02', bg: 'rgba(255,204,2,0.12)' },
+  'Interview Scheduled':   { color: '#b388ff', bg: 'rgba(179,136,255,0.15)' },
+  'HR Round':              { color: '#00b0ff', bg: 'rgba(0,176,255,0.15)' },
+  'Final Round':           { color: '#00e5ff', bg: 'rgba(0,229,255,0.15)' },
+  'Offer Extended':        { color: '#69f0ae', bg: 'rgba(105,240,174,0.12)' },
+  'Joined':                { color: '#00e676', bg: 'rgba(0,230,118,0.15)' },
+  'Rejected':              { color: '#ff5252', bg: 'rgba(255,82,82,0.15)' },
+  'On Hold':               { color: '#ffd60a', bg: 'rgba(255,214,10,0.12)' },
+};
+const PIPELINE_ORDER = ['Applied','Phone Screened','Skill Assessment Sent','Interview Scheduled','HR Round','Final Round','Offer Extended','Joined'];
+
+function stageBadge(stage) {
+  const s = STAGES[stage] || STAGES['Applied'];
+  return `<span class="stage-badge" style="color:${s.color};background:${s.bg}"><span class="stage-dot" style="background:${s.color}"></span>${stage}</span>`;
+}
+
+function populateStageSelects() {
+  const opts = Object.keys(STAGES).map(s => `<option value="${s}">${s}</option>`).join('');
+  document.getElementById('f-stage').innerHTML = opts;
+  document.getElementById('bulkStageSelect').innerHTML = opts;
+  const filterOpts = '<option value="">All Stages</option>' + opts;
+  const filterStage = document.getElementById('filterStage');
+  const prevVal = filterStage.value;
+  filterStage.innerHTML = filterOpts;
+  if ([...filterStage.options].some(o => o.value === prevVal)) filterStage.value = prevVal;
+}
+
+// ══════════════════════════════════════════
+// TOASTS
+// ══════════════════════════════════════════
+function showToast(msg, type) {
+  const container = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' ' + type : '');
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+// ══════════════════════════════════════════
+// CONFIRM MODAL
+// ══════════════════════════════════════════
+let pendingConfirmAction = null;
+function openConfirm(message, onConfirm, yesLabel) {
+  document.getElementById('confirmMessage').textContent = message;
+  document.getElementById('confirmYesBtn').textContent = yesLabel || 'Confirm';
+  pendingConfirmAction = onConfirm;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function confirmYes() {
+  const action = pendingConfirmAction;
+  closeConfirmModal();
+  if (action) action();
+}
+function confirmNo() { closeConfirmModal(); }
+function closeConfirmModal() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  pendingConfirmAction = null;
+}
+
+// ══════════════════════════════════════════
+// FILTER / SORT / PAGINATION STATE
+// ══════════════════════════════════════════
+let sortField = 'date';
+let sortDir = 'desc';
+let currentPage = 1;
+const PAGE_SIZE = 8;
+let selectedIds = new Set();
+let currentPageIds = [];
+
+function populateFilterSelects() {
+  const sourceSel = document.getElementById('filterSource');
+  const recSel = document.getElementById('filterRecruiter');
+  const prevSource = sourceSel.value;
+  const prevRec = recSel.value;
+  const sources = [...new Set(candidates.map(c => c.source).filter(Boolean))].sort();
+  const recruiters = [...new Set(candidates.map(c => c.recruiter).filter(Boolean))].sort();
+  sourceSel.innerHTML = '<option value="">All Sources</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
+  recSel.innerHTML = '<option value="">All Recruiters</option>' + recruiters.map(r => `<option value="${r}">${r}</option>`).join('');
+  if (sources.includes(prevSource)) sourceSel.value = prevSource;
+  if (recruiters.includes(prevRec)) recSel.value = prevRec;
+}
+
+function getFiltered() {
+  const q = (document.getElementById('searchBox').value || '').toLowerCase();
+  const stage = document.getElementById('filterStage').value;
+  const source = document.getElementById('filterSource').value;
+  const recruiter = document.getElementById('filterRecruiter').value;
+  const from = document.getElementById('filterFrom').value;
+  const to = document.getElementById('filterTo').value;
+
+  return candidates.filter(c => {
+    if (q && !(
+      c.name.toLowerCase().includes(q) ||
+      (c.email||'').toLowerCase().includes(q) ||
+      c.position.toLowerCase().includes(q) ||
+      c.stage.toLowerCase().includes(q) ||
+      (c.recruiter||'').toLowerCase().includes(q) ||
+      (c.languages||'').toLowerCase().includes(q)
+    )) return false;
+    if (stage && c.stage !== stage) return false;
+    if (source && c.source !== source) return false;
+    if (recruiter && c.recruiter !== recruiter) return false;
+    if (from && c.date && c.date < from) return false;
+    if (to && c.date && c.date > to) return false;
+    return true;
+  });
+}
+
+function onFilterChange() { currentPage = 1; renderTable(); }
+function clearFilters() {
+  document.getElementById('searchBox').value = '';
+  document.getElementById('filterStage').value = '';
+  document.getElementById('filterSource').value = '';
+  document.getElementById('filterRecruiter').value = '';
+  document.getElementById('filterFrom').value = '';
+  document.getElementById('filterTo').value = '';
+  currentPage = 1;
+  renderTable();
+}
+
+function setSort(field) {
+  if (sortField === field) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortField = field; sortDir = 'asc'; }
+  currentPage = 1;
+  renderTable();
+}
+function updateSortIndicators() {
+  ['name','position','stage','recruiter','skillScore','date'].forEach(f => {
+    const el = document.getElementById('sort-' + f);
+    if (!el) return;
+    el.textContent = f === sortField ? (sortDir === 'asc' ? '▲' : '▼') : '';
+  });
+}
+function sortList(list) {
+  const dir = sortDir === 'asc' ? 1 : -1;
+  return [...list].sort((a, b) => {
+    let av = a[sortField], bv = b[sortField];
+    if (sortField === 'skillScore') { av = Number(av) || 0; bv = Number(bv) || 0; }
+    else { av = (av || '').toString().toLowerCase(); bv = (bv || '').toString().toLowerCase(); }
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+    return 0;
+  });
+}
+
+// ══════════════════════════════════════════
+// KPI STRIP (whole pipeline, not just filtered view)
+// ══════════════════════════════════════════
+function renderKPIs() {
+  const total = candidates.length;
+  const active = candidates.filter(c => !['Rejected','On Hold'].includes(c.stage)).length;
+  const offers = candidates.filter(c => ['Offer Extended','Joined'].includes(c.stage)).length;
+  const joined = candidates.filter(c => c.stage === 'Joined').length;
+  const conv = total ? Math.round((joined/total)*100) : 0;
+  document.getElementById('kpiStrip').innerHTML = [
+    ['Total',total,'var(--cyan)'],
+    ['Active',active,'var(--purple)'],
+    ['Offers',offers,'var(--green)'],
+    ['Joined',joined,'#00e676'],
+    ['Conversion',conv+'%','var(--yellow)'],
+  ].map(([l,v,c]) => `
+    <div class="kpi-cell">
+      <span class="kpi-num" style="color:${c}">${v}</span>
+      <div class="kpi-label">${l}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// BULK SELECTION
+// ══════════════════════════════════════════
+function toggleSelect(id) {
+  if (selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id);
+  renderBulkBar();
+  updateSelectAllBoxState();
+}
+function toggleSelectAllVisible() {
+  const box = document.getElementById('selectAllBox');
+  if (box.checked) currentPageIds.forEach(id => selectedIds.add(id));
+  else currentPageIds.forEach(id => selectedIds.delete(id));
+  renderTable();
+}
+function updateSelectAllBoxState() {
+  const box = document.getElementById('selectAllBox');
+  if (!currentPageIds.length) { box.checked = false; return; }
+  box.checked = currentPageIds.every(id => selectedIds.has(id));
+}
+function clearSelection() { selectedIds.clear(); renderTable(); }
+function renderBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  if (selectedIds.size > 0) {
+    bar.style.display = 'flex';
+    document.getElementById('bulkCount').textContent = selectedIds.size + ' selected';
+  } else {
+    bar.style.display = 'none';
+  }
+}
+function bulkChangeStage() {
+  const newStage = document.getElementById('bulkStageSelect').value;
+  const n = selectedIds.size;
+  if (!n) return;
+  candidates.forEach(c => {
+    if (selectedIds.has(c.id)) {
+      c.stage = newStage;
+      c.notes = c.notes || [];
+      c.notes.unshift({ text: `Stage bulk-updated to "${newStage}"`, date: new Date().toISOString() });
+    }
+  });
+  save();
+  showToast(`Updated ${n} candidate(s) to "${newStage}".`, 'success');
+  clearSelection();
+  renderAll();
+}
+function bulkDelete() {
+  const n = selectedIds.size;
+  if (!n) return;
+  openConfirm(`Delete ${n} selected candidate(s)? This cannot be undone.`, () => {
+    candidates = candidates.filter(c => !selectedIds.has(c.id));
+    save();
+    showToast(`Deleted ${n} candidate(s).`, 'success');
+    clearSelection();
+    renderAll();
+  }, 'Delete');
+}
+
+// ══════════════════════════════════════════
+// TABLE RENDER
+// ══════════════════════════════════════════
+function computeTotalPages(filteredLen) {
+  return Math.max(1, Math.ceil(filteredLen / PAGE_SIZE));
+}
+
+function renderTable() {
+  populateFilterSelects();
+  const filtered = sortList(getFiltered());
+  const totalPages = computeTotalPages(filtered.length);
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = filtered.slice(start, start + PAGE_SIZE);
+  currentPageIds = pageItems.map(c => c.id);
+
+  const tbody = document.getElementById('candidateTable');
+  const empty = document.getElementById('emptyState');
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = pageItems.map(c => `
+      <tr>
+        <td><input type="checkbox" ${selectedIds.has(c.id) ? 'checked' : ''} onchange="toggleSelect('${c.id}')"/></td>
+        <td class="td-mono">${c.id}</td>
+        <td><a href="#" onclick="openDetail('${c.id}');return false;" style="color:var(--text);text-decoration:none"><strong>${c.name}</strong></a><br><span style="color:var(--muted);font-size:0.75rem">${c.email||''}</span></td>
+        <td>${c.position}</td>
+        <td><span style="color:var(--muted)">${c.source}</span></td>
+        <td>${stageBadge(c.stage)}</td>
+        <td>${c.recruiter||'—'}</td>
+        <td class="td-mono">${c.skillScore !== '' && c.skillScore != null ? c.skillScore : '—'}</td>
+        <td style="color:var(--muted);font-size:0.8rem">${c.languages||'—'}</td>
+        <td class="td-mono">${c.date||'—'}</td>
+        <td>
+          <button class="action-btn" onclick="openDetail('${c.id}')">View</button>
+          <button class="action-btn" onclick="editCandidate('${c.id}')">Edit</button>
+          <button class="action-btn del-btn" onclick="deleteCandidate('${c.id}')">Delete</button>
+        </td>
+      </tr>`).join('');
+  }
+  updateSelectAllBoxState();
+  updateSortIndicators();
+  renderKPIs();
+  renderBulkBar();
+  document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages} · ${filtered.length} candidate(s)`;
+}
+
+function prevPage() { if (currentPage > 1) { currentPage--; renderTable(); } }
+function nextPage() {
+  const totalPages = computeTotalPages(getFiltered().length);
+  if (currentPage < totalPages) { currentPage++; renderTable(); }
+}
+
+function renderAll() {
+  renderTable();
+  renderAnalytics();
+}
+
+// ══════════════════════════════════════════
+// ADD / EDIT MODAL
+// ══════════════════════════════════════════
+function openModal(id) {
+  editingId = id || null;
+  const m = document.getElementById('modalTitle');
+  if (id) {
+    m.textContent = 'Edit Candidate';
+    const c = candidates.find(x => x.id === id);
+    document.getElementById('f-name').value = c.name;
+    document.getElementById('f-email').value = c.email||'';
+    document.getElementById('f-phone').value = c.phone||'';
+    document.getElementById('f-pos').value = c.position;
+    document.getElementById('f-src').value = c.source;
+    document.getElementById('f-stage').value = c.stage;
+    document.getElementById('f-rec').value = c.recruiter||'';
+    document.getElementById('f-date').value = c.date||'';
+    document.getElementById('f-lang').value = c.languages||'';
+    document.getElementById('f-score').value = c.skillScore||'';
+  } else {
+    m.textContent = 'Add Candidate';
+    ['f-name','f-email','f-phone','f-pos','f-rec','f-date','f-lang','f-score'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f-src').value = 'LinkedIn';
+    document.getElementById('f-stage').value = 'Applied';
+    document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  }
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function readForm() {
+  return {
+    name: document.getElementById('f-name').value.trim(),
+    position: document.getElementById('f-pos').value.trim(),
+    email: document.getElementById('f-email').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
+    source: document.getElementById('f-src').value,
+    stage: document.getElementById('f-stage').value,
+    recruiter: document.getElementById('f-rec').value.trim(),
+    date: document.getElementById('f-date').value,
+    languages: document.getElementById('f-lang').value.trim(),
+    skillScore: document.getElementById('f-score').value.trim(),
+  };
+}
+
+function saveCandidate() {
+  const data = readForm();
+  if (!data.name || !data.position) { showToast('Name and Position are required.', 'error'); return; }
+
+  if (editingId) {
+    const idx = candidates.findIndex(c => c.id === editingId);
+    candidates[idx] = { ...candidates[idx], ...data };
+    save(); closeModal(); showToast('Candidate updated.', 'success'); renderAll();
+    return;
+  }
+
+  const dup = data.email ? candidates.find(c => c.email && c.email.toLowerCase() === data.email.toLowerCase()) : null;
+  const doAdd = () => {
+    counter++;
+    candidates.unshift({ id: `CAN-${counter}`, ...data, notes: [] });
+    save(); closeModal(); showToast('Candidate added.', 'success'); renderAll();
+  };
+  if (dup) {
+    openConfirm(`A candidate with this email already exists (${dup.name}, ${dup.id}). Add anyway?`, doAdd, 'Add Anyway');
+  } else {
+    doAdd();
+  }
+}
+
+function editCandidate(id) { openModal(id); }
+
+function deleteCandidate(id) {
+  openConfirm('Remove this candidate? This cannot be undone.', () => {
+    candidates = candidates.filter(c => c.id !== id);
+    save(); showToast('Candidate removed.', 'success'); renderAll();
+  }, 'Delete');
+}
+
+document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+document.getElementById('confirmOverlay').addEventListener('click', function(e) { if (e.target === this) closeConfirmModal(); });
+document.getElementById('detailOverlay').addEventListener('click', function(e) { if (e.target === this) closeDetail(); });
+
+// ══════════════════════════════════════════
+// DETAIL / NOTES MODAL
+// ══════════════════════════════════════════
+let detailCandidateId = null;
+function openDetail(id) {
+  detailCandidateId = id;
+  renderDetail();
+  document.getElementById('detailOverlay').classList.add('open');
+}
+function closeDetail() { document.getElementById('detailOverlay').classList.remove('open'); detailCandidateId = null; }
+function renderDetail() {
+  const c = candidates.find(x => x.id === detailCandidateId);
+  if (!c) { closeDetail(); return; }
+  document.getElementById('d-name').textContent = c.name;
+  document.getElementById('d-id').textContent = c.id;
+  document.getElementById('d-email').textContent = c.email || '—';
+  document.getElementById('d-phone').textContent = c.phone || '—';
+  document.getElementById('d-pos').textContent = c.position;
+  document.getElementById('d-src').textContent = c.source;
+  document.getElementById('d-stage').innerHTML = stageBadge(c.stage);
+  document.getElementById('d-rec').textContent = c.recruiter || '—';
+  document.getElementById('d-lang').textContent = c.languages || '—';
+  document.getElementById('d-score').textContent = (c.skillScore !== '' && c.skillScore != null) ? c.skillScore : '—';
+
+  const notes = (c.notes || []);
+  const list = document.getElementById('notesList');
+  if (!notes.length) {
+    list.innerHTML = '<div class="no-notes">No notes yet. Add one below.</div>';
+  } else {
+    list.innerHTML = notes.map(n => `
+      <div class="note-item">
+        ${escapeHtml(n.text)}
+        <div class="note-date">${new Date(n.date).toLocaleString()}</div>
+      </div>`).join('');
+  }
+}
+function addNote() {
+  const input = document.getElementById('noteInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const c = candidates.find(x => x.id === detailCandidateId);
+  if (!c) return;
+  c.notes = c.notes || [];
+  c.notes.unshift({ text, date: new Date().toISOString() });
+  save();
+  input.value = '';
+  renderDetail();
+  showToast('Note added.', 'success');
+}
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// ══════════════════════════════════════════
+// CSV EXPORT / IMPORT
+// ══════════════════════════════════════════
+const CSV_FIELDS = ['id','name','email','phone','position','source','stage','recruiter','date','languages','skillScore'];
+
+function csvEscape(val) {
+  const s = (val === undefined || val === null) ? '' : String(val);
+  if (/[",\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+
+function exportCSV() {
+  const rows = sortList(getFiltered());
+  if (!rows.length) { showToast('Nothing to export with current filters.', 'error'); return; }
+  const header = CSV_FIELDS.join(',');
+  const lines = rows.map(c => CSV_FIELDS.map(f => csvEscape(c[f])).join(','));
+  const csv = [header, ...lines].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `hiretrack-candidates-${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${rows.length} candidate(s).`, 'success');
+}
+
+// Basic CSV line parser (no support for embedded commas inside unquoted fields)
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i+1] === '"') { cur += '"'; i++; }
+      else if (ch === '"') { inQuotes = false; }
+      else { cur += ch; }
+    } else {
+      if (ch === '"') inQuotes = true;
+      else if (ch === ',') { result.push(cur); cur = ''; }
+      else cur += ch;
+    }
+  }
+  result.push(cur);
+  return result.map(s => s.trim());
+}
+
+function handleCSVImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const text = e.target.result;
+      const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+      if (lines.length < 2) { showToast('CSV needs a header row and at least one data row.', 'error'); return; }
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+      let added = 0, skipped = 0;
+      for (let i = 1; i < lines.length; i++) {
+        const cells = parseCSVLine(lines[i]);
+        const row = {};
+        headers.forEach((h, idx) => row[h] = cells[idx] || '');
+        const name = row['name'] || '';
+        const position = row['position'] || row['position applied'] || '';
+        if (!name || !position) { skipped++; continue; }
+        const email = row['email'] || '';
+        if (email && candidates.some(c => c.email && c.email.toLowerCase() === email.toLowerCase())) { skipped++; continue; }
+        counter++;
+        candidates.unshift(normalizeCandidate({
+          id: `CAN-${counter}`,
+          name, position,
+          email,
+          phone: row['phone'] || '',
+          source: row['source'] || 'CSV Import',
+          stage: STAGES[row['stage']] ? row['stage'] : 'Applied',
+          recruiter: row['recruiter'] || '',
+          date: row['date'] || new Date().toISOString().split('T')[0],
+          languages: row['languages'] || '',
+          skillScore: row['skillscore'] || '',
+        }));
+        added++;
+      }
+      save();
+      renderAll();
+      showToast(`Imported ${added} candidate(s)${skipped ? `, skipped ${skipped} (missing fields or duplicate email)` : ''}.`, added ? 'success' : 'error');
+    } catch (err) {
+      showToast('Could not parse that CSV file.', 'error');
+    } finally {
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════
+// ANALYTICS (Chart.js)
+// ══════════════════════════════════════════
+let charts = {};
+function cv(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function destroyCharts() { Object.values(charts).forEach(c => c && c.destroy()); charts = {}; }
+
+const PALETTE = ['#00e5ff','#ffd60a','#b388ff','#00e676','#ff9100','#ff5252','#00b0ff','#69f0ae'];
+
+function renderAnalytics() {
+  if (typeof Chart === 'undefined') return;
+  destroyCharts();
+  const muted = cv('--muted'), text = cv('--text'), border = cv('--border'), cyan = cv('--cyan'), green = cv('--green');
+
+  // Funnel by stage
+  const stageCounts = PIPELINE_ORDER.map(s => candidates.filter(c => c.stage === s).length);
+  charts.funnel = new Chart(document.getElementById('funnelChart'), {
+    type: 'bar',
+    data: { labels: PIPELINE_ORDER, datasets: [{ label: 'Candidates', data: stageCounts, backgroundColor: cyan, borderRadius: 6 }] },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: muted, precision: 0 }, grid: { color: border } },
+        y: { ticks: { color: text, font: { size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Sourcing mix
+  const sourceMap = {};
+  candidates.forEach(c => { sourceMap[c.source] = (sourceMap[c.source]||0) + 1; });
+  const sourceLabels = Object.keys(sourceMap);
+  charts.source = new Chart(document.getElementById('sourceChart'), {
+    type: 'doughnut',
+    data: { labels: sourceLabels, datasets: [{ data: sourceLabels.map(s => sourceMap[s]), backgroundColor: sourceLabels.map((_,i) => PALETTE[i % PALETTE.length]) }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: muted, boxWidth: 10, font: { size: 10 } } } } }
+  });
+
+  // Recruiter leaderboard
+  const recMap = {};
+  candidates.forEach(c => {
+    const r = c.recruiter || 'Unassigned';
+    if (!recMap[r]) recMap[r] = { total: 0, joined: 0 };
+    recMap[r].total++;
+    if (c.stage === 'Joined') recMap[r].joined++;
+  });
+  const recLabels = Object.keys(recMap);
+  charts.recruiter = new Chart(document.getElementById('recruiterChart'), {
+    type: 'bar',
+    data: {
+      labels: recLabels,
+      datasets: [
+        { label: 'Total Handled', data: recLabels.map(r => recMap[r].total), backgroundColor: border, borderRadius: 5 },
+        { label: 'Joined', data: recLabels.map(r => recMap[r].joined), backgroundColor: green, borderRadius: 5 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: muted, font: { size: 10 } } } },
+      scales: {
+        x: { ticks: { color: muted, font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: muted, precision: 0 }, grid: { color: border } }
+      }
+    }
+  });
+
+  // Applications by month
+  const monthMap = {};
+  candidates.forEach(c => {
+    if (!c.date) return;
+    const key = c.date.slice(0,7);
+    monthMap[key] = (monthMap[key]||0) + 1;
+  });
+  const monthLabels = Object.keys(monthMap).sort();
+  charts.trend = new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: { labels: monthLabels, datasets: [{ label: 'Applications', data: monthLabels.map(m => monthMap[m]), borderColor: cyan, backgroundColor: 'rgba(0,229,255,0.12)', fill: true, tension: 0.3, pointRadius: 3 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: muted, font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: muted, precision: 0 }, grid: { color: border } }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// DEMO REQUEST FORM (mailto — no backend in this static build)
+// ══════════════════════════════════════════
+const CONTACT_EMAIL = 'your-email@example.com'; // TODO: replace with your real contact address
+function submitDemoRequest(e) {
+  e.preventDefault();
+  const name = document.getElementById('c-name').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const company = document.getElementById('c-company').value.trim();
+  const volume = document.getElementById('c-volume').value;
+  const message = document.getElementById('c-message').value.trim();
+  if (!name || !email || !company) { showToast('Please fill in name, email, and company.', 'error'); return; }
+  const subject = encodeURIComponent(`Demo request: ${company}`);
+  const body = encodeURIComponent(
+    `Name: ${name}\nEmail: ${email}\nCompany: ${company}\nMonthly hiring volume: ${volume || 'Not specified'}\n\nMessage:\n${message || '(none)'}`
+  );
+  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+  showToast('Opening your email client to send the request…', 'success');
+}
+
+// ══════════════════════════════════════════
+// SEED DEMO DATA (only if empty)
+// ══════════════════════════════════════════
+if (!candidates.length) {
+  const seed = [
+    { name:'Aarav Mehta',    email:'aarav@email.com',   phone:'9800011122', position:'Marketing Intern',       source:'LinkedIn',     stage:'Joined',               recruiter:'Priya Sharma', date:'2025-01-05', languages:'English, Hindi',       skillScore:78 },
+    { name:'Sneha Rao',      email:'sneha@email.com',   phone:'9800011123', position:'Data Analyst Intern',    source:'Internshala',  stage:'HR Round',             recruiter:'Rahul Gupta',  date:'2025-01-08', languages:'English',              skillScore:85 },
+    { name:'Karan Singh',    email:'karan@email.com',   phone:'9800011124', position:'UI/UX Intern',           source:'Referral',     stage:'Offer Extended',       recruiter:'Priya Sharma', date:'2025-01-10', languages:'English, Hindi',       skillScore:81 },
+    { name:'Riya Patel',     email:'riya@email.com',    phone:'9800011125', position:'Content Writer',         source:'LinkedIn',     stage:'Rejected',             recruiter:'Anjali Verma', date:'2025-01-12', languages:'English, Gujarati',    skillScore:60 },
+    { name:'Arjun Nair',     email:'arjun@email.com',   phone:'9800011126', position:'Software Dev Intern',    source:'Campus Drive', stage:'Final Round',          recruiter:'Rahul Gupta',  date:'2025-01-15', languages:'English, Malayalam',   skillScore:88 },
+    { name:'Meera Joshi',    email:'meera@email.com',   phone:'9800011127', position:'HR Intern',              source:'Naukri',       stage:'Interview Scheduled',  recruiter:'Anjali Verma', date:'2025-01-18', languages:'English, Hindi',       skillScore:72 },
+    { name:'Pooja Sharma',   email:'pooja@email.com',   phone:'9800011128', position:'UI/UX Intern',           source:'Referral',     stage:'Joined',               recruiter:'Priya Sharma', date:'2025-02-01', languages:'English',              skillScore:90 },
+    { name:'Vikram Das',     email:'vikram@email.com',  phone:'9800011129', position:'Software Dev Intern',    source:'LinkedIn',     stage:'Phone Screened',       recruiter:'Rahul Gupta',  date:'2025-02-03', languages:'English, Bengali',     skillScore:66 },
+    { name:'Divya Reddy',    email:'divya@email.com',   phone:'9800011130', position:'HR Intern',              source:'LinkedIn',     stage:'Applied',              recruiter:'Anjali Verma', date:'2025-02-10', languages:'English, Telugu',      skillScore:'' },
+    { name:'Harsh Mishra',   email:'harsh@email.com',   phone:'9800011131', position:'Finance Intern',         source:'Campus Drive', stage:'On Hold',              recruiter:'Priya Sharma', date:'2025-02-22', languages:'English, Hindi',       skillScore:55 },
+    { name:'Fatima Sheikh',  email:'fatima@email.com',  phone:'9800011132', position:'Data Annotator',         source:'Vendor List',  stage:'Skill Assessment Sent',recruiter:'Rahul Gupta',  date:'2025-03-02', languages:'English, Urdu, Hindi', skillScore:'' },
+    { name:'Rohan Kulkarni', email:'rohan@email.com',   phone:'9800011133', position:'Image Labeling Associate',source:'Walk-In',     stage:'Joined',               recruiter:'Priya Sharma', date:'2025-03-05', languages:'English, Marathi',     skillScore:91 },
+    { name:'Aisha Khan',     email:'aisha@email.com',   phone:'9800011134', position:'Content Moderator',      source:'Vendor List',  stage:'Interview Scheduled',  recruiter:'Anjali Verma', date:'2025-03-11', languages:'English, Hindi, Urdu', skillScore:76 },
+    { name:'Nikhil Verma',   email:'nikhil@email.com',  phone:'9800011135', position:'Transcription QA',       source:'Campus Drive', stage:'Applied',              recruiter:'Rahul Gupta',  date:'2025-03-18', languages:'English',              skillScore:'' },
+  ];
+  seed.forEach(s => { counter++; candidates.push(normalizeCandidate({ id:`CAN-${counter}`, ...s })); });
+  save();
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+populateStageSelects();
+document.getElementById('filterStage').value = '';
+renderAll();
+</script>
+</body>
+</html>
